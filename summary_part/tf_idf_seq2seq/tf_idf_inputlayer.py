@@ -5,14 +5,8 @@ from common.base_model import BaseModel
 import numpy as np
 # from dict_create import vocab_dict_cre
 from natto import MeCab
-from format_text import format_text
+from text_form.format_text import format_text
 
-# documents = []
-# for i in range(1,9):
-#     f = open('../../corpora/hori_F&Q/hori_corpus0'+ str(i) + '.txt', "r")
-#     text= f.read()
-#     f.close()
-#     documents.append(text)
 
 #レイヤとしての役割だけでなく、入力データの整形も一役かっている。
 class InputLayer:

@@ -9,67 +9,13 @@ from common import config
 from common.optimizer import SGD
 from common.trainer import RnnlmTrainer
 from common.util import eval_perplexity, to_gpu
-from seq2seq.proposed_layer import InputLayer
+from commonseq2seq.input_layer import InputLayer
 from common.seq2seq import Seq2seq
 import numpy as np
 import matplotlib.pyplot as plt
 import pickle
-from format_text import format_text
+from text_form import *
 
-
-def vocab_dict_cre(text):
-    corpus = []
-    word_to_id = {}
-    id_to_word = {}
-    f_dict = {}
-    cache = 0
-
-    with MeCab('-F%m,%f[0],%h') as nm:
-        for n in nm.parse(text, as_nodes=True):
-            node = n.feature.split(',')
-            if len(node) != 3:
-                continue
-            if not node[0] in self.f_dict:
-                word_to_id.update({node[0]:self.cache})
-                id_to_word.update({cache:node[0]})
-                cache += 1
-                f_dict.update({node[0]:1})
-            else:
-                f_dict[node[0]] += 1
-            corpus.append(self.all_word_to_id[node[0]])
-    corpus.append(corpus)
-    return corpus
-
-def format_document(documents):
-    long_text = ''
-    art_text = ''
-    copora = []
-    for text in documents:
-        art_text = format_text(text)
-        copora = vocab_dict_cre(art_text)
-    return copora
-
-def read_data(first, last, Flag='train'):
-    summary_documents = []
-    if Flag == 'train':
-        for i in range(first,last):
-            f = open('../../corpora/hori_F&Q/train/hori_corpus'+ str(i) + '.txt', "r")
-            text= f.read()
-            f.close()
-            summary_documents.append(text)
-    elif Flag == 'test':
-        for i in range(first,last):
-            f = open('../../corpora/hori_F&Q/summary/hori_summary'+ str(i) + '.txt', "r")
-            text= f.read()
-            f.close()
-            summary_documents.append(text)
-    elif Flag == 'eval':
-        f = open('../../corpora/hori_F&Q/train/hori_corpus'+ str(last) + '.txt', "r")
-        text= f.read()
-        f.close()
-        text = format_text(text)
-        summary_documents.append(text)
-    return summary_documents
 
 # ハイパーパラメータの設定
 batch_size = 10
@@ -113,7 +59,7 @@ docu_xs = inputlayer.get_train_data(corpora)
 model = Seq2seq(vocab_size, wordvec_size, hidden_size)
 optimizer = SGD()
 #学習するか
-learn = False
+learn = True
 if learn:
     for (xs, ts) in zip(docu_xs, docu_ts):
         # ミニバッチの各サンプルの読み込み開始位置を計算
