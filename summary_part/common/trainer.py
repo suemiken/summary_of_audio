@@ -6,7 +6,7 @@ import time
 import matplotlib.pyplot as plt
 from common.np import *  # import numpy as np
 from common.util import clip_grads
-
+import pickle
 
 class Trainer:
     def __init__(self, model, optimizer):
@@ -23,7 +23,6 @@ class Trainer:
         model, optimizer = self.model, self.optimizer
         total_loss = 0
         loss_count = 0
-
         start_time = time.time()
         for epoch in range(max_epoch):
             # シャッフル
@@ -46,13 +45,13 @@ class Trainer:
                 loss_count += 1
 
                 # 評価
-                if (eval_interval is not None) and (iters % eval_interval) == 0:
-                    avg_loss = total_loss / loss_count
-                    elapsed_time = time.time() - start_time
-                    print('| epoch %d |  iter %d / %d | time %d[s] | loss %.2f'
-                          % (self.current_epoch + 1, iters + 1, max_iters, elapsed_time, avg_loss))
-                    self.loss_list.append(float(avg_loss))
-                    total_loss, loss_count = 0, 0
+                # if (eval_interval is not None) and (iters % eval_interval) == 0:
+                avg_loss = total_loss / loss_count
+                elapsed_time = time.time() - start_time
+                print('| epoch %d |  iter %d / %d | time %d[s] | loss %.2f'
+                      % (self.current_epoch + 1, iters + 1, max_iters, elapsed_time, avg_loss))
+                self.loss_list.append(float(avg_loss))
+                total_loss, loss_count = 0, 0
 
             self.current_epoch += 1
 
@@ -64,9 +63,9 @@ class Trainer:
         plt.xlabel('iterations (x' + str(self.eval_interval) + ')')
         plt.ylabel('loss')
         plt.show()
-
-        with open(file_name + '.pkl', 'wb') as f:
-            pickle.dump(model.params, f)
+        #
+        # with open(file_name + '.pkl', 'wb') as f:
+        #     pickle.dump(self.model.params, f)
 
 class RnnlmTrainer:
     def __init__(self, model, optimizer):

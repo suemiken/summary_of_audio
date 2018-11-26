@@ -1,21 +1,6 @@
 # coding: utf-8
 import sys
 sys.path.append('..')
-from common import config
-# GPUで実行する場合は下記のコメントアウトを消去（要cupy）
-# ==============================================
-# config.GPU = True
-# ==============================================
-from common.optimizer import SGD
-from common.trainer import RnnlmTrainer
-from common.util import eval_perplexity, to_gpu
-from commonseq2seq.input_layer import InputLayer
-from common.seq2seq import Seq2seq
-import numpy as np
-import matplotlib.pyplot as plt
-import pickle
-from text_form.format_text import format_text
-
 
 def read_data(first, last, Flag='train'):
     summary_documents = []

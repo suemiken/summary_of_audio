@@ -53,19 +53,6 @@ class InputLayer:
             outdata.append(array)
         return outdata
 
-#学習じと評価時で違う形になるかも
-    def forward(self, xs):
-        ls_in = self.embed.forward(xs)
-        return ls_in
-
-    def backward(self, dls):
-        dhs = np.zeros_like(self.hs)
-        dhs[:, -1, :] = dh
-
-        dout = self.lstm.backward(dhs)
-        dout = self.embed.backward(dout)
-        return dout
-
     def vocab_dict_cre(self, text):
         corpus = []
         with MeCab('-F%m,%f[0],%h') as nm:
@@ -234,53 +221,3 @@ class InputLayer:
                 break
             summary_sentence.append(target_art[index][1])
         return summary_sentence
-
-class Embedding:
-    def __init__(self, W):
-        self.params = [W]
-        self.grads = [np.zeros_like(W)]
-        self.idx = None
-
-    def forward(self, idx, TD_W, dcu_num):
-        W, = self.params
-        self.idx = idx
-        out =  W[idx]
-        out.append()
-        return out
-
-    def backward(self, dout):
-        dW, = self.grads
-        dW[...] = 0
-
-        np.add.at(dW, self.idx, dout)
-        # もしくは
-        # for i, word_id in enumerate(self.idx):
-        #     dW[word_to_id] += dout[i]
-
-        return None
-
-class TimeEmbedding:
-    def __init__(self, W, TD_W):
-        self.params = [W]
-        self.grads = [np.zeros_like(W)]
-        self.layers = None
-        self.W = W
-        self.TD_W = TD_W
-
-    def forward(self, xs):
-        N, T = xs.shape
-        V, D = self.W.shape
-
-        out = np.empty((N, T, D), dtype='f')
-        self.layers = []
-
-        for t in range(T):
-            layer = Embedding(self.W)
-            out[:, t, :] = layer.forward(xs[:, t],)
-
-
-        return out
-
-# xs = np.arange(9)
-# xs = xs.reshape
-# i = InputLayer(documents, 16)
