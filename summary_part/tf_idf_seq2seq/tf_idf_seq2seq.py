@@ -1,8 +1,10 @@
+
 # coding: utf-8
 import sys
 sys.path.append('..')
 from common.time_layers import *
 from common.base_model import BaseModel
+import numpy as np
 
 
 class Encoder:
@@ -10,19 +12,12 @@ class Encoder:
         V, D, H = vocab_size, wordvec_size, hidden_size
         rn = np.random.randn
 
-        
         embed_W = (rn(V, D) / 100).astype('f')
-
-        em_tf_idf_W = None
-
         lstm_Wx = (rn(D, 4 * H) / np.sqrt(D)).astype('f')
         lstm_Wh = (rn(H, 4 * H) / np.sqrt(H)).astype('f')
         lstm_b = np.zeros(4 * H).astype('f')
 
         self.embed = TimeEmbedding(embed_W)
-
-        # self.em_tf_idf = EM_TF_IDF()
-
         self.lstm = TimeLSTM(lstm_Wx, lstm_Wh, lstm_b, stateful=False)
 
         self.params = self.embed.params + self.lstm.params
@@ -31,7 +26,6 @@ class Encoder:
 
     def forward(self, xs):
         xs = self.embed.forward(xs)
-        # xs = self.em_tf_idf = EM_TF_IDF.forward(xs)
         hs = self.lstm.forward(xs)
         self.hs = hs
         return hs[:, -1, :]
@@ -41,7 +35,6 @@ class Encoder:
         dhs[:, -1, :] = dh
 
         dout = self.lstm.backward(dhs)
-        # xs = self.em_tf_idf = EM_TF_IDF.backward(xs)
         dout = self.embed.backward(dout)
         return dout
 
@@ -51,9 +44,8 @@ class Decoder:
         V, D, H = vocab_size, wordvec_size, hidden_size
         rn = np.random.randn
 
-
-        embed_W = (rn(V, D) / 100).astype('f')
-        lstm_Wx = (rn(D, 4 * H) / np.sqrt(D)).astype('f')
+        embed_W = (rn(V, D+1) / 100).astype('f')
+        lstm_Wx = (rn(D+1, 4 * H) / np.sqrt(D)).astype('f')
         lstm_Wh = (rn(H, 4 * H) / np.sqrt(H)).astype('f')
         lstm_b = np.zeros(4 * H).astype('f')
         affine_W = (rn(H, V) / np.sqrt(H)).astype('f')
@@ -128,3 +120,70 @@ class Seq2seq(BaseModel):
         h = self.encoder.forward(xs)
         sampled = self.decoder.generate(h, start_id, sample_size)
         return sampled
+
+
+class Embedding:
+    def __init__(self, W, dcu_num):
+        self.params = [W]
+        self.grads = [np.zeros_like(W)]
+        self.idx = None
+
+    def forward(self, idx, TD_W, dcu_num):
+        W, = self.params
+        self.idx = idx
+        out =  W[idx]
+        out.append()
+        return out
+
+    def backward(self, dout):
+        dW, = self.grads
+        dW[...] = 0
+
+        np.add.at(dW, self.idx, dout)
+        # もしくは
+        # for i, word_id in enumerate(self.idx):
+        #     dW[word_to_id] += dout[i]
+
+        return None
+
+
+
+class TimeEmbedding:
+    def __init__(self, W, TD_W):
+        self.params = [W]
+        self.grads = [np.zeros_like(W)]
+        self.layers = None
+        self.W = W
+        self.TD_W = TD_W
+
+    def forward(self, xs, dcu_num):
+        N, T = xs.shape
+        V, D = self.W.shape
+
+        out = np.empty((N, T, D), dtype='f')
+        self.layers = []
+
+        for t in range(T):
+            layer = Embedding(self.W, dcu_num)
+            out[:, t, :] = layer.forward(xs[:, t])
+            self.layers.append(layer)
+
+        return out
+
+    def backward(self, dout):
+        N, T, D = dout.shape
+
+        grad = 0
+        for t in range(T):
+            layer = self.layers[t]
+            layer.backward(dout[:, t, :])
+            grad += layer.grads[0]
+
+        self.grads[0][...] = grad
+        return None
+
+vocab_size, wordvec_size, hidden_size = 1000,15,30
+model = Seq2seq(vocab_size, wordvec_size, hidden_size)
+# xs = np.arange(9)
+# xs = xs.reshape
+# i = InputLayer(documents, 16)
