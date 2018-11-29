@@ -5,11 +5,12 @@ from common import config
 # GPUで実行する場合は下記のコメントアウトを消去（要cupy）
 # ==============================================
 # config.GPU = True
+
 # ==============================================
 from common.optimizer import Adam
 from common.trainer import Trainer
 from common.util import eval_perplexity, to_gpu
-from commonseq2seq.input_layer import InputLayer
+from input_layer import InputLayer
 from common.seq2seq import Seq2seq
 import numpy as np
 import matplotlib.pyplot as plt
@@ -23,10 +24,11 @@ wordvec_size = 100
 hidden_size = 100
 time_size = 5  # Truncated BPTTの展開する時間サイズ
 lr = 0.1
-max_epoch = 100
+max_epoch = 10
 max_grad = 5.0
 
-# 学習時に使用する変数
+# 学習時に使用する
+
 total_loss = 0
 loss_count = 0
 ppl_list = []
