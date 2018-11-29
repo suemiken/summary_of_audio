@@ -36,15 +36,6 @@ class Trainer:
                 batch_tf_idf =[]
                 batch_x = x[iters*batch_size:(iters+1)*batch_size]
                 batch_t = t[iters*batch_size:(iters+1)*batch_size]
-                #各文書の単語にtf-idfを付加する準備
-                # for (one_docu, one_tf_idf) in zip(batch_x, tf_idf):
-                #     array = []
-                #     for word in one_docu:
-                #         array.append(one_tf_idf[word])
-                #
-                #     batch_tf_idf.append(array)
-                # print(np.array(tf_idf).shape)
-                # batch_tf_idf = np.array(batch_tf_idf)
 
 
                 # 勾配を求め、パラメータを更新

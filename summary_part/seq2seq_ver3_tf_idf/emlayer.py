@@ -9,8 +9,7 @@ class TF_IDF_Embedding:
         W, = self.params
         self.idx = idx
         f_tf_idf = []
-        # print(tf_idf.shape)
-        # print(idx)
+
         for (id, one_td) in zip(idx, tf_idf):
             taihi_a = []
             taihi_a.append(one_td[id])
@@ -19,7 +18,6 @@ class TF_IDF_Embedding:
         tf_idf = np.array(f_tf_idf)
 
         out = W[idx] * tf_idf
-
         return out
 
     def backward(self, dout):

@@ -54,7 +54,6 @@ for i in range(1,8):
 inputlayer = TF_IDF_InputLayer(input_documents, 16, False)
 
 corpora, id_to_word, word_to_id = inputlayer.get_corpus()
-# print(len(word_to_id))
 vocab_size = len(word_to_id)
 docu_xs = inputlayer.get_train_data(corpora)
 

@@ -120,8 +120,6 @@ class TF_IDF_InputLayer:
         #領域の静的確保
         tf = [[0 for i in range(len(self.all_word_to_id))] for j in range(len(self.corpus))]
         idf = [0 for i in range(len(self.all_word_to_id))]
-        # print(np.array(tf).shape)
-        # print('-----')
         #これでいいんか？？？？？？
         idf[-2] = 0.00001
         for i, one_corpus in enumerate(self.corpus):
@@ -137,11 +135,6 @@ class TF_IDF_InputLayer:
         nidf = np.array(idf)
 
         tf_idf = nidf * ntf
-        # print(np.array(tf_idf).shape)
-        # print('-----')
-        # print(ntf[:5])
-        # print(nidf[:5])
-        # print(tf_idf[:5])
         return tf_idf
 
 
