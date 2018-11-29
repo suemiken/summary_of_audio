@@ -9,7 +9,7 @@ from text_form.format_text import format_text
 
 
 #レイヤとしての役割だけでなく、入力データの整形も一役かっている。
-class InputLayer:
+class TF_IDF_InputLayer:
     def __init__(self, documents, wordvec_size, test_flag):
         # 文書の解析
         self.documents = documents
@@ -21,16 +21,6 @@ class InputLayer:
         #コーパス作成
         self.format_document()
         self.corpus = self.get_train_data(self.corpus)
-        if not test_flag:
-            #レイヤーの設定
-            rn = np.random.randn
-            vocab_size = len(self.all_word_to_id)
-            embed_W = (rn(vocab_size, wordvec_size - 2) / 100).astype('f')
-            self.TD_W = self.tf_idf()
-            self.embed = TimeEmbedding(embed_W, self.TD_W)
-            self.params = self.embed.params
-            self.grads = self.embed.grads
-            self.hs = None
 
     def get_corpus(self):
         return self.corpus, self.all_id_to_word, self.all_word_to_id
@@ -127,17 +117,17 @@ class InputLayer:
 
 
     def tf_idf(self):
-        tf_idf = []
         #領域の静的確保
         tf = [[0 for i in range(len(self.all_word_to_id))] for j in range(len(self.corpus))]
         idf = [0 for i in range(len(self.all_word_to_id))]
+        # print(np.array(tf).shape)
+        # print('-----')
         #これでいいんか？？？？？？
         idf[-2] = 0.00001
         for i, one_corpus in enumerate(self.corpus):
             for id in one_corpus:
                 tf[i][id] += 1
         ntf = np.array(tf)
-
         for art_tf in tf:
             for i, text_tf in enumerate(art_tf):
                 if text_tf != 0:
@@ -146,9 +136,12 @@ class InputLayer:
             idf[i] = round(np.log(len(self.corpus) / D) + 1, 3)
         nidf = np.array(idf)
 
-        for one_tf in ntf:
-            tf_idf.append(nidf * one_tf)
-
+        tf_idf = nidf * ntf
+        # print(np.array(tf_idf).shape)
+        # print('-----')
+        # print(ntf[:5])
+        # print(nidf[:5])
+        # print(tf_idf[:5])
         return tf_idf
 
 
