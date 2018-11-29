@@ -21,9 +21,9 @@ from text_form import *
 batch_size = 3
 wordvec_size = 100
 hidden_size = 100
-time_size = 5  # Truncated BPTTの展開する時間サイズ
+time_size = 50  # Truncated BPTTの展開する時間サイズ
 lr = 0.1
-max_epoch = 100
+max_epoch = 500
 max_grad = 5.0
 
 # 学習時に使用する変数
