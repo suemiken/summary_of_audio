@@ -255,7 +255,6 @@ class TimeEmbedding:
 
         out = np.empty((N, T, D), dtype='f')
         self.layers = []
-        print(xs.shape)
         for t in range(T):
             layer = Embedding(self.W)
 
