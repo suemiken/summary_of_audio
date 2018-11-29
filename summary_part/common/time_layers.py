@@ -224,6 +224,23 @@ class TimeLSTM:
     def reset_state(self):
         self.h, self.c = None, None
 
+class Embedding:
+    def __init__(self, W):
+        self.params = [W]
+        self.grads = [np.zeros_like(W)]
+        self.idx = None
+
+    def forward(self, idx):
+        W, = self.params
+        self.idx = idx
+        out = W[idx]
+        return out
+
+    def backward(self, dout):
+        dW, = self.grads
+        dW[...] = 0
+        np.add.at(dW, self.idx, dout)
+        return None
 
 class TimeEmbedding:
     def __init__(self, W):
@@ -238,11 +255,13 @@ class TimeEmbedding:
 
         out = np.empty((N, T, D), dtype='f')
         self.layers = []
-
+        print(xs.shape)
         for t in range(T):
             layer = Embedding(self.W)
+
             out[:, t, :] = layer.forward(xs[:, t])
             self.layers.append(layer)
+
 
         return out
 

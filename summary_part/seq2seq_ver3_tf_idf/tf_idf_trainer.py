@@ -1,4 +1,3 @@
-
 # coding: utf-8
 import sys
 sys.path.append('..')
@@ -10,18 +9,19 @@ from common.util import clip_grads
 import pickle
 
 class Trainer:
-    def __init__(self, model, optimizer):
+    def __init__(self, model, optimizer, tf_idf):
         self.model = model
         self.optimizer = optimizer
         self.loss_list = []
         self.eval_interval = None
         self.current_epoch = 0
+        self.tf_idf = tf_idf
 
     def fit(self, x, t, max_epoch=10, batch_size=32, max_grad=None, eval_interval=20):
         data_size = len(x)
         max_iters = data_size // batch_size
         self.eval_interval = eval_interval
-        model, optimizer = self.model, self.optimizer
+        model, optimizer, tf_idf = self.model, self.optimizer, self.tf_idf
         total_loss = 0
         loss_count = 0
         start_time = time.time()
@@ -30,12 +30,25 @@ class Trainer:
             idx = numpy.random.permutation(numpy.arange(data_size))
             x = x[idx]
             t = t[idx]
+            tf_idf = tf_idf[idx]
 
             for iters in range(max_iters):
+                batch_tf_idf =[]
                 batch_x = x[iters*batch_size:(iters+1)*batch_size]
                 batch_t = t[iters*batch_size:(iters+1)*batch_size]
+                #各文書の単語にtf-idfを付加する準備
+                # for (one_docu, one_tf_idf) in zip(batch_x, tf_idf):
+                #     array = []
+                #     for word in one_docu:
+                #         array.append(one_tf_idf[word])
+                #
+                #     batch_tf_idf.append(array)
+                # print(np.array(tf_idf).shape)
+                # batch_tf_idf = np.array(batch_tf_idf)
+
+
                 # 勾配を求め、パラメータを更新
-                loss = model.forward(batch_x, batch_t)
+                loss = model.forward(batch_x, batch_t, tf_idf)
                 model.backward()
                 params, grads = remove_duplicate(model.params, model.grads)  # 共有された重みを1つに集約
                 if max_grad is not None:
@@ -127,8 +140,6 @@ class RnnlmTrainer:
                     total_loss, loss_count = 0, 0
 
             self.current_epoch += 1
-
-
 
         # グラフの描画
         x = np.arange(len(ppl_list))

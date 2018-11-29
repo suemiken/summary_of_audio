@@ -7,10 +7,10 @@ from common import config
 # config.GPU = True
 # ==============================================
 from common.optimizer import Adam
-from common.trainer import Trainer
+from tf_idf_trainer import Trainer
 from common.util import eval_perplexity, to_gpu
-from commonseq2seq.input_layer import InputLayer
-from common.seq2seq import Seq2seq
+from tf_idf_inputlayer import TF_IDF_InputLayer
+from tf_idf_seq2seq import Seq2seq
 import numpy as np
 import matplotlib.pyplot as plt
 import pickle
@@ -39,7 +39,7 @@ for i in range(1,8):
     f.close()
     summary_documents.append(text)
 
-inputlayer = InputLayer(summary_documents, 16, False)
+inputlayer = TF_IDF_InputLayer(summary_documents, 16, False)
 summary_corpora, _, _ = inputlayer.get_corpus()
 docu_ts = inputlayer.get_train_data(summary_corpora)
 
@@ -51,15 +51,17 @@ for i in range(1,8):
     f.close()
     input_documents.append(text)
 
-inputlayer = InputLayer(input_documents, 16, False)
+inputlayer = TF_IDF_InputLayer(input_documents, 16, False)
 
 corpora, id_to_word, word_to_id = inputlayer.get_corpus()
+# print(len(word_to_id))
 vocab_size = len(word_to_id)
 docu_xs = inputlayer.get_train_data(corpora)
 
+tf_idf = inputlayer.tf_idf()
 model = Seq2seq(vocab_size, wordvec_size, hidden_size)
 optimizer = Adam()
-trainer = Trainer(model, optimizer)
+trainer = Trainer(model, optimizer, tf_idf)
 
 #学習するか
 learn = True
@@ -71,11 +73,11 @@ if learn:
     for epoch in range(max_epoch):
         trainer.fit(docu_xs, docu_ts, max_epoch=1,batch_size=batch_size, max_grad=max_grad)
 
-    trainer.plot('seq2seq_better')
+    trainer.plot('seq2seq3_ver3')
 
-    with open('seq2seq_better.pkl', 'wb') as f:
+    with open('seq2seq_ver3.pkl', 'wb') as f:
         pickle.dump(model.params, f)
 
 else:
-    with open('seq2seq.pkl', 'rb') as f:
+    with open('seq2seq_ver3.pkl', 'rb') as f:
         model.param = pickle.load(f)
