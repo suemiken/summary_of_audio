@@ -9,7 +9,7 @@ from text_form.format_text import format_text
 
 
 #レイヤとしての役割だけでなく、入力データの整形も一役かっている。
-class TF_IDF_InputLayer:
+class EM_TF_IDF_InputLayer:
     def __init__(self, documents, wordvec_size, test_flag):
         # 文書の解析
         self.documents = documents
@@ -44,6 +44,7 @@ class TF_IDF_InputLayer:
         return outdata
 
     def vocab_dict_cre(self, text):
+        
         corpus = []
         with MeCab('-F%m,%f[0],%h') as nm:
             for n in nm.parse(text, as_nodes=True):
@@ -92,30 +93,6 @@ class TF_IDF_InputLayer:
             self.vocab_dict_cre(art_text)
         return None
 
-    # [[[speaker_id, content_text, emotion],[speaker_id, content_text, emotion]],[[speaker_id, content_text, emotion],[speaker_id, content_text, emotion]]]
-    def create_em_speaker_text(self):
-        uttrance_em = []
-        em_speakers_info = []
-        text_number = 0
-        for text in self.documents:
-            text = format_text(text, replace_f=False)
-            text = text.replace('話者:', '')
-            text = text.replace(': ', '')
-            text = text.replace('怒り', '0')
-            text = text.replace('喜び', '1')
-            text = text.replace('悲しみ', '2')
-            text = text.replace('驚き', '3')
-            text = text.replace('平静', '4')
-            text = text.replace('恐れ', '5')
-            uttrances = []
-            uttrances = text.split('\n', -1)
-            for uttrance in uttrances:
-                uttrance_em.append(uttrance.split(' ', 2))
-            em_speakers_info.append(uttrance_em)
-
-        return em_speakers_info
-
-
     def tf_idf(self):
         #領域の静的確保
         tf = [[0 for i in range(len(self.all_word_to_id))] for j in range(len(self.corpus))]
@@ -137,9 +114,36 @@ class TF_IDF_InputLayer:
         tf_idf = nidf * ntf
         return tf_idf
 
+    # [[[speaker_id, content_text, emotion],[speaker_id, content_text, emotion]],[[speaker_id, content_text, emotion],[speaker_id, content_text, emotion]]]
+    def create_em_speaker_text(self, documents):
 
-    def em(self):
+        uttrance_em = []
+        em_speakers_info = []
+        text_number = 0
         
+        for document in documents:
+            text = document[0]
+            
+            text = format_text(text, replace_f=False)
+            text = text.replace('話者:', '')
+            text = text.replace(': ', '')
+            text = text.replace('怒り', '0')
+            text = text.replace('喜び', '1')
+            text = text.replace('悲しみ', '2')
+            text = text.replace('驚き', '3')
+            text = text.replace('平静', '4')
+            text = text.replace('恐れ', '5')
+            uttrances = []
+            uttrance_em = []
+            uttrances = text.split('\n', -1)
+            for uttrance in uttrances:
+                uttrance_em.append(uttrance.split(' ', 2))
+            em_speakers_info.append(uttrance_em)
+        return em_speakers_info
+
+
+    def em(self, documents):
+
         #前者/後者
         #       怒り0  喜び1  悲しみ2  驚き3 平静4  恐れ5
         #怒り0   w11  w12   w13    w14  w15  w16
@@ -157,14 +161,14 @@ class TF_IDF_InputLayer:
             [ 0.7, 0.6, 0.5, 0.8, 0.6, 0.4],
             [ 0.1, 0.5, 0.4, 0.3, 0.5, 0.2]])
 
-        em_speakers_docu = self.create_em_speaker_text()
+        em_speakers_docu = self.create_em_speaker_text(documents)
         speaker_em_W = []
         speakers_em_W = []
         former_em = None
         for speakers_info in em_speakers_docu:
             for j, speaker_info in enumerate(speakers_info):
                 if j == len(speakers_info):
-                #youtube発話の最後は喜びであることが多いことを利用。
+                #youtube発話の823021最後は喜びであることが多いことを利用。
                     speaker_em_W.append(em_W[former_em][1])
                 elif j == 0:
                     former_em = int(speaker_info[2])
@@ -173,38 +177,11 @@ class TF_IDF_InputLayer:
                     speaker_em_W.append(em_W[former_em][after_em])
                     former_em = after_em
             speakers_em_W.append(speaker_em_W)
-        return speakers_em_W
+            
+        return np.array(speakers_em_W)
 
 
     def update_docuement(self, text):
         self.documents.append(text)
 
         return None
-
-    def tfidf_summary(self, num_sent):
-        summary_sentence = []
-        # self.documents.append(text)
-        tf_idf = self.tf_idf()
-        tar_tf_idf = tf_idf[-1]
-        target_art = self.create_em_speaker_text()
-        target_art = target_art[-1]
-        score = [0 for i in range(len(target_art))]
-
-        for id, sentence in enumerate(target_art):
-            text = sentence[1]
-            with MeCab('-F%m,%f[0],%h') as nm:
-                for n in nm.parse(text, as_nodes=True):
-                    node = n.feature.split(',')
-                    if len(node) != 3:
-                        continue
-                    if self.all_word_to_id.get(node[0]) == None:
-                        continue
-                    score[id] += tar_tf_idf[self.all_word_to_id.get(node[0])]
-
-        score = np.array(score)
-        max_sort = np.argsort(score)[::-1]
-        for i, index in enumerate(max_sort):
-            if num_sent == i:
-                break
-            summary_sentence.append(target_art[index][1])
-        return summary_sentence

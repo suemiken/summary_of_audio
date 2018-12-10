@@ -9,19 +9,21 @@ from common.util import clip_grads
 import pickle
 
 class Trainer:
-    def __init__(self, model, optimizer, tf_idf):
+    def __init__(self, model, optimizer, tf_idf, em):
         self.model = model
         self.optimizer = optimizer
         self.loss_list = []
         self.eval_interval = None
         self.current_epoch = 0
         self.tf_idf = tf_idf
+        self.em = em
 
-    def fit(self, x, t, max_epoch=10, batch_size=32, max_grad=None, eval_interval=20):
+    def fit(self, x, t, word_to_id, max_epoch=10, batch_size=32, max_grad=None, eval_interval=20):
         data_size = len(x)
+
         max_iters = data_size // batch_size
         self.eval_interval = eval_interval
-        model, optimizer, tf_idf = self.model, self.optimizer, self.tf_idf
+        model, optimizer, tf_idf ,em = self.model, self.optimizer, self.tf_idf, self.em
         total_loss = 0
         loss_count = 0
         start_time = time.time()
@@ -31,15 +33,15 @@ class Trainer:
             x = x[idx]
             t = t[idx]
             tf_idf = tf_idf[idx]
+            em = em[idx]
 
             for iters in range(max_iters):
-                batch_tf_idf =[]
                 batch_x = x[iters*batch_size:(iters+1)*batch_size]
                 batch_t = t[iters*batch_size:(iters+1)*batch_size]
-
+                batch_em = em[iters*batch_size:(iters+1)*batch_size]
 
                 # 勾配を求め、パラメータを更新
-                loss = model.forward(batch_x, batch_t, tf_idf)
+                loss = model.forward(batch_x, batch_t, tf_idf, batch_em, word_to_id)
                 model.backward()
                 params, grads = remove_duplicate(model.params, model.grads)  # 共有された重みを1つに集約
                 if max_grad is not None:

@@ -7,10 +7,10 @@ from common import config
 # config.GPU = True
 # ==============================================
 from common.optimizer import Adam
-from tf_idf_trainer import Trainer
+from em_tf_idf_trainer import Trainer
 from common.util import eval_perplexity, to_gpu
-from tf_idf_inputlayer import TF_IDF_InputLayer
-from tf_idf_seq2seq import Seq2seq
+from inputlayer import EM_TF_IDF_InputLayer
+from emseq2seq import Seq2seq
 import numpy as np
 import matplotlib.pyplot as plt
 import pickle
@@ -39,7 +39,7 @@ for i in range(1,8):
     f.close()
     summary_documents.append(text)
 
-inputlayer = TF_IDF_InputLayer(summary_documents, 16, False)
+inputlayer = EM_TF_IDF_InputLayer(summary_documents, 16, False)
 summary_corpora, _, _ = inputlayer.get_corpus()
 docu_ts = inputlayer.get_train_data(summary_corpora)
 
@@ -51,28 +51,36 @@ for i in range(1,8):
     f.close()
     input_documents.append(text)
 
-inputlayer = TF_IDF_InputLayer(input_documents, 16, False)
+inputlayer = EM_TF_IDF_InputLayer(input_documents, 16, False)
 
 corpora, id_to_word, word_to_id = inputlayer.get_corpus()
 vocab_size = len(word_to_id)
 docu_xs = inputlayer.get_train_data(corpora)
 
 tf_idf = inputlayer.tf_idf()
+
+#em data
+emdata = []
+for i in range(1,8):
+    f = open('../../corpora/hori_F&Q/train/hori_corpus'+ str(i) + '.txt', "r")
+    text= f.read()
+    f.close()
+    emdata.append([text])
+
+em = inputlayer.em(emdata)
 model = Seq2seq(vocab_size, wordvec_size, hidden_size)
 optimizer = Adam()
-trainer = Trainer(model, optimizer, tf_idf)
+trainer = Trainer(model, optimizer, tf_idf, em)
 
 #学習するか
-learn = False
+learn = True
 docu_xs = np.array(docu_xs)
 docu_ts = np.array(docu_ts)
-
-print(word_to_id['。'])
 
 if learn:
     acc_list = []
     for epoch in range(max_epoch):
-        trainer.fit(docu_xs, docu_ts, max_epoch=1,batch_size=batch_size, max_grad=max_grad)
+        trainer.fit(docu_xs, docu_ts, word_to_id, max_epoch=1,batch_size=batch_size, max_grad=max_grad)
 
     trainer.plot('seq2seq3_ver3')
 
@@ -80,5 +88,6 @@ if learn:
         pickle.dump(model.params, f)
 
 else:
-    with open('seq2seq_ver3.pkl', 'rb') as f:
-        model.param = pickle.load(f)
+    # with open('seq2seq_ver3.pkl', 'rb') as f:
+    #     model.param = pickle.load(f)
+    print('else')

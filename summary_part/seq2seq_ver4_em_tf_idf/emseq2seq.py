@@ -3,7 +3,7 @@
 import sys
 sys.path.append('..')
 from common.time_layers import *
-from emlayer import TF_IDF_TimeEmbedding
+from emlayer import EM_TF_IDF_TimeEmbedding
 from common.base_model import BaseModel
 import numpy as np
 
@@ -18,7 +18,7 @@ class Encoder:
         lstm_Wh = (rn(H, 4 * H) / np.sqrt(H)).astype('f')
         lstm_b = np.zeros(4 * H).astype('f')
 
-        self.embed = TF_IDF_TimeEmbedding(embed_W)
+        self.embed = EM_TF_IDF_TimeEmbedding(embed_W)
 
 
         self.lstm = TimeLSTM(lstm_Wx, lstm_Wh, lstm_b, stateful=False)
@@ -27,8 +27,8 @@ class Encoder:
         self.grads = self.embed.grads + self.lstm.grads
         self.hs = None
 
-    def forward(self, xs, tf_idf):
-        xs = self.embed.forward(xs, tf_idf)
+    def forward(self, xs, tf_idf, em, word_to_id):
+        xs = self.embed.forward(xs, tf_idf, em, word_to_id)
 
         hs = self.lstm.forward(xs)
         self.hs = hs
@@ -106,9 +106,9 @@ class Seq2seq(BaseModel):
         self.params = self.encoder.params + self.decoder.params
         self.grads = self.encoder.grads + self.decoder.grads
 
-    def forward(self, xs, ts, tf_idf):
+    def forward(self, xs, ts, tf_idf, em, word_to_id):
         decoder_xs, decoder_ts = ts[:, :-1], ts[:, 1:]
-        h = self.encoder.forward(xs, tf_idf)
+        h = self.encoder.forward(xs, tf_idf, em, word_to_id)
         score = self.decoder.forward(decoder_xs, h)
         loss = self.softmax.forward(score, decoder_ts)
         return loss

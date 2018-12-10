@@ -1,23 +1,30 @@
 from common.np import *
-class TF_IDF_Embedding:
+class EM_TF_IDF_Embedding:
     def __init__(self, W):
         self.params = [W]
         self.grads = [np.zeros_like(W)]
         self.idx = None
 
-    def forward(self, idx, tf_idf):
+    def forward(self, idx, tf_idf, ems):
         W, = self.params
         self.idx = idx
         f_tf_idf = []
-
+        
+        # tf_idfの整形3*1
         for (id, one_td) in zip(idx, tf_idf):
             taihi_a = []
             taihi_a.append(one_td[id])
             f_tf_idf.append(taihi_a)
 
         tf_idf = np.array(f_tf_idf)
-
+        
+        #emの整形3*1
+        ems = np.array([ems]).T
+        
+        # print(tf_idf)
         out = W[idx] * tf_idf
+        out = ems * out
+        
         return out
 
     def backward(self, dout):
@@ -26,31 +33,45 @@ class TF_IDF_Embedding:
         np.add.at(dW, self.idx, dout)
         return None
 
-class TF_IDF_TimeEmbedding:
+class EM_TF_IDF_TimeEmbedding:
     def __init__(self, W):
         self.params = [W]
         self.grads = [np.zeros_like(W)]
         self.layers = None
         self.W = W
 
-    def forward(self, xs, tf_idf):
+    def forward(self, xs, tf_idf, em, word_to_id):
         N, T = xs.shape
         V, D = self.W.shape
 
         out = np.empty((N, T, D), dtype='f')
         self.layers = []
+        
+        #単語に割り当てる重みの計算
+        i = 0
+        ems = []
+        for (ea, xa) in zip(em, xs):
+            e = []
+            for x in xa:
+                if x == word_to_id['。']:
+                    i = i + 1                
+                    e.append(0.1)
+                elif x == word_to_id['null']:
+                    e.append(0.1)
+                else:               
+                    e.append(ea[i])    
+            ems.append(e)
+        em = np.array(ems)
 
         for t in range(T):
-            layer = TF_IDF_Embedding(self.W)
-            out[:, t, :] = layer.forward(xs[:, t], tf_idf)
+            layer = EM_TF_IDF_Embedding(self.W)
+            out[:, t, :] = layer.forward(xs[:, t], tf_idf, em[:, t])
             self.layers.append(layer)
-
 
         return out
 
     def backward(self, dout):
         N, T, D = dout.shape
-
         grad = 0
         for t in range(T):
             layer = self.layers[t]
