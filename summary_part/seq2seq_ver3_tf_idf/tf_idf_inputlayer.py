@@ -137,44 +137,6 @@ class TF_IDF_InputLayer:
         tf_idf = nidf * ntf
         return tf_idf
 
-
-    def em(self):
-        #前者/後者
-        #       怒り0  喜び1  悲しみ2  驚き3 平静4  恐れ5
-        #怒り0   w11  w12   w13    w14  w15  w16
-        #喜び1    w21  w22   w23    w24  w25  w26
-        #悲しみ2  ・・・・・
-        #驚き3    ・
-        #平静4    ・
-        #恐れ5    ・
-
-        em_W = np.array([
-            [ 0.1, 0.1, 0.1, 0.2, 0.3, 0.2],
-            [ 0.4, 0.6, 0.5, 0.7, 0.6, 0.4],
-            [ 0.3, 0.1, 0.5, 0.5, 0.5, 0.3],
-            [ 0.4, 0.5, 0.2, 0.4, 0.8, 0.3],
-            [ 0.7, 0.6, 0.5, 0.8, 0.6, 0.4],
-            [ 0.1, 0.5, 0.4, 0.3, 0.5, 0.2]])
-
-        em_speakers_docu = self.create_em_speaker_text()
-        speaker_em_W = []
-        speakers_em_W = []
-        former_em = None
-        for speakers_info in em_speakers_docu:
-            for j, speaker_info in enumerate(speakers_info):
-                if j == len(speakers_info):
-                #youtube発話の最後は喜びであることが多いことを利用。
-                    speaker_em_W.append(em_W[former_em][1])
-                elif j == 0:
-                    former_em = int(speaker_info[2])
-                else:
-                    after_em = int(speaker_info[2])
-                    speaker_em_W.append(em_W[former_em][after_em])
-                    former_em = after_em
-            speakers_em_W.append(speaker_em_W)
-        return speakers_em_W
-
-
     def update_docuement(self, text):
         self.documents.append(text)
 

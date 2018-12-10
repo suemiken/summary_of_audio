@@ -3,7 +3,7 @@
 import sys
 sys.path.append('..')
 from common.time_layers import *
-from emlayer import TF_IDF_TimeEmbedding
+from tfidf_layer import TF_IDF_TimeEmbedding
 from common.base_model import BaseModel
 import numpy as np
 
