@@ -1,5 +1,4 @@
 from common.np import *
-
 class TF_IDF_Embedding:
     def __init__(self, W):
         self.params = [W]
