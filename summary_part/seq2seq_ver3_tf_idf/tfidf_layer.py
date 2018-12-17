@@ -6,19 +6,23 @@ class TF_IDF_Embedding:
         self.grads = [np.zeros_like(W)]
         self.idx = None
 
-    def forward(self, idx, tf_idf):
+    def forward(self, idx, tf_idf, train):
         W, = self.params
         self.idx = idx
-        f_tf_idf = []
+        if train:
+            f_tf_idf = []
+            
+            for (id, one_td) in zip(idx, tf_idf):
+                taihi_a = []
+                taihi_a.append(one_td[id])
+                f_tf_idf.append(taihi_a)
 
-        for (id, one_td) in zip(idx, tf_idf):
-            taihi_a = []
-            taihi_a.append(one_td[id])
-            f_tf_idf.append(taihi_a)
-
-        tf_idf = np.array(f_tf_idf)
-
-        out = W[idx] * tf_idf
+            tf_idf = np.array(f_tf_idf)
+            
+            out = W[idx] * tf_idf
+        else:
+            out = W[idx]
+        
         return out
 
     def backward(self, dout):
@@ -34,7 +38,7 @@ class TF_IDF_TimeEmbedding:
         self.layers = None
         self.W = W
 
-    def forward(self, xs, tf_idf):
+    def forward(self, xs, tf_idf, train):
         N, T = xs.shape
         V, D = self.W.shape
 
@@ -43,7 +47,7 @@ class TF_IDF_TimeEmbedding:
 
         for t in range(T):
             layer = TF_IDF_Embedding(self.W)
-            out[:, t, :] = layer.forward(xs[:, t], tf_idf)
+            out[:, t, :] = layer.forward(xs[:, t], tf_idf, train)
             self.layers.append(layer)
 
 

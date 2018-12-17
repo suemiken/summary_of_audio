@@ -15,7 +15,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pickle
 from text_form import *
-
+from text_form.eval import eval
 
 # ハイパーパラメータの設定
 batch_size = 3
@@ -80,3 +80,5 @@ if learn:
 else:
     with open('seq2seq_ver3.pkl', 'rb') as f:
         model.param = pickle.load(f)
+        
+print(eval(inputlayer, model))

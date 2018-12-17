@@ -16,6 +16,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pickle
 from text_form import *
+from text_form.eval import eval
 
 
 # ハイパーパラメータの設定
@@ -24,11 +25,7 @@ wordvec_size = 100
 hidden_size = 100
 time_size = 50  # Truncated BPTTの展開する時間サイズ
 lr = 0.1
-<<<<<<< HEAD:summary_part/train/train_summary_better.py
 max_epoch = 500
-=======
-max_epoch = 10
->>>>>>> a778a4f893d20fdb98df36ba80e9547e5b4adeb0:summary_part/seq2seq_ver2/second_train.py
 max_grad = 5.0
 
 # 学習時に使用する
@@ -68,7 +65,7 @@ optimizer = Adam()
 trainer = Trainer(model, optimizer)
 
 #学習するか
-learn = True
+learn = False
 docu_xs = np.array(docu_xs)
 docu_ts = np.array(docu_ts)
 
@@ -77,11 +74,14 @@ if learn:
     for epoch in range(max_epoch):
         trainer.fit(docu_xs, docu_ts, max_epoch=1,batch_size=batch_size, max_grad=max_grad)
 
-    trainer.plot('seq2seq_better')
+    trainer.plot('seq2seq2')
 
-    with open('seq2seq_better.pkl', 'wb') as f:
+    with open('seq2seq2.pkl', 'wb') as f:
         pickle.dump(model.params, f)
 
 else:
-    with open('seq2seq.pkl', 'rb') as f:
+    with open('seq2seq2.pkl', 'rb') as f:
         model.param = pickle.load(f)
+        
+# #テストデータで評価
+print(eval(inputlayer, model))

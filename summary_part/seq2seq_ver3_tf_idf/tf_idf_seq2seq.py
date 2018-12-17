@@ -27,9 +27,9 @@ class Encoder:
         self.grads = self.embed.grads + self.lstm.grads
         self.hs = None
 
-    def forward(self, xs, tf_idf):
-        xs = self.embed.forward(xs, tf_idf)
-
+    def forward(self, xs, tf_idf, train=True):
+        xs = self.embed.forward(xs, tf_idf, train)
+        
         hs = self.lstm.forward(xs)
         self.hs = hs
         return hs[:, -1, :]
@@ -106,7 +106,7 @@ class Seq2seq(BaseModel):
         self.params = self.encoder.params + self.decoder.params
         self.grads = self.encoder.grads + self.decoder.grads
 
-    def forward(self, xs, ts, tf_idf):
+    def forward(self, xs, ts, tf_idf, train=True):
         decoder_xs, decoder_ts = ts[:, :-1], ts[:, 1:]
         h = self.encoder.forward(xs, tf_idf)
         score = self.decoder.forward(decoder_xs, h)
@@ -120,6 +120,7 @@ class Seq2seq(BaseModel):
         return dout
 
     def generate(self, xs, start_id, sample_size):
-        h = self.encoder.forward(xs)
+        tf_idf=None
+        h = self.encoder.forward(xs, tf_idf, train=False)
         sampled = self.decoder.generate(h, start_id, sample_size)
         return sampled

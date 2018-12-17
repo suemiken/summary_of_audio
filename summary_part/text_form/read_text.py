@@ -1,6 +1,7 @@
 # coding: utf-8
 import sys
 sys.path.append('..')
+from text_form.format_text import format_text
 
 def read_data(first, last, Flag='train'):
     summary_documents = []

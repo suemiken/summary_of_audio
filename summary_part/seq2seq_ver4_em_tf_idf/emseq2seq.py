@@ -27,8 +27,8 @@ class Encoder:
         self.grads = self.embed.grads + self.lstm.grads
         self.hs = None
 
-    def forward(self, xs, tf_idf, em, word_to_id):
-        xs = self.embed.forward(xs, tf_idf, em, word_to_id)
+    def forward(self, xs, tf_idf, em, word_to_id, train=True):
+        xs = self.embed.forward(xs, tf_idf, em, word_to_id, train)
 
         hs = self.lstm.forward(xs)
         self.hs = hs
@@ -120,6 +120,7 @@ class Seq2seq(BaseModel):
         return dout
 
     def generate(self, xs, start_id, sample_size):
-        h = self.encoder.forward(xs)
+        tf_idf, em, word_to_id = None, None, None
+        h = self.encoder.forward(xs, tf_idf, em, word_to_id, train=False)
         sampled = self.decoder.generate(h, start_id, sample_size)
         return sampled

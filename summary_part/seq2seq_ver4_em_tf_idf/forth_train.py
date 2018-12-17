@@ -15,6 +15,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pickle
 from text_form import *
+from text_form.eval import eval
 
 
 # ハイパーパラメータの設定
@@ -23,7 +24,7 @@ wordvec_size = 100
 hidden_size = 100
 time_size = 5  # Truncated BPTTの展開する時間サイズ
 lr = 0.1
-max_epoch = 100
+max_epoch = 500
 max_grad = 5.0
 
 # 学習時に使用する変数
@@ -73,7 +74,7 @@ optimizer = Adam()
 trainer = Trainer(model, optimizer, tf_idf, em)
 
 #学習するか
-learn = True
+learn = False
 docu_xs = np.array(docu_xs)
 docu_ts = np.array(docu_ts)
 
@@ -82,12 +83,14 @@ if learn:
     for epoch in range(max_epoch):
         trainer.fit(docu_xs, docu_ts, word_to_id, max_epoch=1,batch_size=batch_size, max_grad=max_grad)
 
-    trainer.plot('seq2seq3_ver3')
+    trainer.plot('seq2seq4_ver3')
 
-    with open('seq2seq_ver3.pkl', 'wb') as f:
+    with open('seq2seq_ver4.pkl', 'wb') as f:
         pickle.dump(model.params, f)
 
 else:
-    # with open('seq2seq_ver3.pkl', 'rb') as f:
-    #     model.param = pickle.load(f)
-    print('else')
+    with open('seq2seq_ver4.pkl', 'rb') as f:
+        model.param = pickle.load(f)
+
+    
+print(eval(inputlayer, model))

@@ -9,13 +9,13 @@ from common import config
 from common.optimizer import SGD
 from common.trainer import RnnlmTrainer
 from common.util import eval_perplexity, to_gpu
-from commonseq2seq.input_layer import InputLayer
+from input_layer import InputLayer
 from common.seq2seq import Seq2seq
 import numpy as np
 import matplotlib.pyplot as plt
 import pickle
 from text_form import *
-
+from text_form.eval import eval
 
 # ハイパーパラメータの設定
 batch_size = 10
@@ -59,7 +59,7 @@ docu_xs = inputlayer.get_train_data(corpora)
 model = Seq2seq(vocab_size, wordvec_size, hidden_size)
 optimizer = SGD()
 #学習するか
-learn = True
+learn = False
 if learn:
     for (xs, ts) in zip(docu_xs, docu_ts):
         # ミニバッチの各サンプルの読み込み開始位置を計算
@@ -99,7 +99,7 @@ if learn:
             total_loss, loss_count = 0, 0
 
     #パラメータの保存
-    with open('seq2seq.pkl', 'wb') as f:
+    with open('seq2seq1.pkl', 'wb') as f:
         pickle.dump(model.params, f)
 
     # グラフの描画
@@ -110,19 +110,8 @@ if learn:
     plt.show()
 
 else:
-    with open('seq2seq.pkl', 'rb') as f:
+    with open('seq2seq1.pkl', 'rb') as f:
         model.param = pickle.load(f)
 
 # #テストデータで評価
-test_data = read_data(9,9, Flag='eval')
-# test_inputlayer = InputLayer(test_data, 16, True)
-#
-test_data = inputlayer.test_dict_cre(test_data)
-
-x = model.generate(np.array([test_data]), 1, 100)
-
-text = ''
-for id in x:
-    text += inputlayer.all_id_to_word[id]
-
-print(text)
+print(eval(inputlayer, model))
