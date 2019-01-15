@@ -1,24 +1,7 @@
-# coding: utf-8
-import sys
-sys.path.append('..')
-from eval.similarity import *
-from eval.cros import *
-from common import config
-# GPUで実行する場合は下記のコメントアウトを消去（要cupy）
-# ==============================================
-# config.GPU = True
-# ==============================================
-from common.optimizer import Adam
-from em_tf_idf_trainer import Trainer
-from common.util import eval_perplexity, to_gpu
-from inputlayer import EM_TF_IDF_InputLayer
-from emseq2seq import Seq2seq
-import numpy as np
-import matplotlib.pyplot as plt
-import pickle
-from text_form import *
-from text_form.eval import eval
+from em_cros_valu import *
+from datetime import datetime
 
+<<<<<<< HEAD
 def cros_valu(idx, learn=True):
     
     # ハイパーパラメータの設定
@@ -67,10 +50,20 @@ def cros_valu(idx, learn=True):
                 trainer.fit(docu_xs, docu_ts, word_to_id, max_epoch=1,batch_size=batch_size, max_grad=max_grad)
 
                 trainer.plot('seq2seq'+ str(number))
+=======
 
-            with open('seq2seq_ver'+ str(number) +'.pkl', 'wb') as f:
-                pickle.dump(model.params, f)
 
+idx = [1,3,5,7]
+wvec = 5
+hidden = 5
+lr = 0.05
+max_e = 25
+x=None
+>>>>>>> ea705547afb18b193e9332f8cefc9995adc45d58
+
+for i in range(6):
+
+<<<<<<< HEAD
         else:
             with open('seq2seq_ver'+ str(number) +'.pkl', 'rb') as f:
                 model.param = pickle.load(f)
@@ -92,5 +85,13 @@ def cros_valu(idx, learn=True):
 idx = [1,3,5,7]
 cros_valu(idx, learn=True)
     
+=======
+    date = datetime.now().strftime("%Y-%m-%d:%H-%M-%S")
+    # if i == 0:
+    #     cros_valu(idx, wvec, hidden, lr, max_e):
+>>>>>>> ea705547afb18b193e9332f8cefc9995adc45d58
 
+    em_cros_valu(idx, wvec, hidden, lr, max_e, x, date)
 
+    wvec += 5
+    hidden += 5

@@ -1,25 +1,7 @@
-# coding: utf-8
-import sys
-sys.path.append('..')
-from common import config
-# GPUで実行する場合は下記のコメントアウトを消去（要cupy）
-# ==============================================
-# config.GPU = True
+from cros_valu import *
 
-# ==============================================
-from common.optimizer import Adam
-from common.trainer import Trainer
-from common.util import eval_perplexity, to_gpu
-from input_layer import InputLayer
-from common.seq2seq import Seq2seq
-import numpy as np
-import matplotlib.pyplot as plt
-import pickle
-from text_form import *
-from text_form.eval import eval
-from eval.similarity import *
-from eval.cros import *
 
+<<<<<<< HEAD
 def cros_valu(idx, learn=True):
     
     # ハイパーパラメータの設定
@@ -88,5 +70,21 @@ def cros_valu(idx, learn=True):
 idx = [1,3,5,7]
 cros_valu(idx, learn=True)
     
+=======
 
+idx = [1,3,5,7]
+wvec = 50
+hidden = 50
+lr = 0.1
+max_e = 200
 
+for i in range(6):
+
+    # if i == 0:
+    #     cros_valu(idx, wvec, hidden, lr, max_e):
+>>>>>>> ea705547afb18b193e9332f8cefc9995adc45d58
+
+    cros_valu(idx, wvec, hidden, lr, max_e)
+
+    wvec += 25
+    hidden += 25

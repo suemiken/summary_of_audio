@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 from common.np import *  # import numpy as np
 from common.util import clip_grads
 import pickle
+from datetime import datetime
 
 class Trainer:
     def __init__(self, model, optimizer, tf_idf, em):
@@ -61,6 +62,7 @@ class Trainer:
 
             self.current_epoch += 1
 
+<<<<<<< HEAD
     def plot(self, file_name, ylim=None):
         x = numpy.arange(len(self.loss_list))
         if ylim is not None:
@@ -71,6 +73,21 @@ class Trainer:
         # plt.show()
         plt.savefig(file_name+'.png') 
         
+=======
+    def plot(self, file_name, save, ylim=None):
+        if save:
+            plt.savefig(file_name + '.png')
+            plt.close()
+        else:
+            x = numpy.array(self.loss_list)
+            if ylim is not None:
+                plt.ylim(*ylim)
+            plt.plot(x, self.loss_list, label=file_name, lw=0.8)
+            plt.legend(loc='upper right')
+            plt.xlabel('iterations (x' + str(self.eval_interval) + ')')
+            plt.ylabel('loss')
+            # plt.show()
+>>>>>>> ea705547afb18b193e9332f8cefc9995adc45d58
 
 class RnnlmTrainer:
     def __init__(self, model, optimizer):

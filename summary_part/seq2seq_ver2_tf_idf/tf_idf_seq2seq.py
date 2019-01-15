@@ -3,19 +3,26 @@
 import sys
 sys.path.append('..')
 from common.time_layers import *
-from tfidf_layer import TF_IDF_TimeEmbedding
+from seq2seq_ver2_tf_idf.tfidf_layer import TF_IDF_TimeEmbedding
 from common.base_model import BaseModel
 import numpy as np
 
 
 class Encoder:
-    def __init__(self, vocab_size, wordvec_size, hidden_size):
+    def __init__(self, vocab_size, wordvec_size, hidden_size, seed):
         V, D, H = vocab_size, wordvec_size, hidden_size
         rn = np.random.randn
-
+        np.random.seed(seed)
+        seed += 1
         embed_W = (rn(V, D) / 100).astype('f')
+        np.random.seed(seed)
+        seed += 1
         lstm_Wx = (rn(D, 4 * H) / np.sqrt(D)).astype('f')
+        np.random.seed(seed)
+        seed += 1
         lstm_Wh = (rn(H, 4 * H) / np.sqrt(H)).astype('f')
+        np.random.seed(seed)
+        seed += 1
         lstm_b = np.zeros(4 * H).astype('f')
 
         self.embed = TF_IDF_TimeEmbedding(embed_W)
@@ -29,7 +36,7 @@ class Encoder:
 
     def forward(self, xs, tf_idf, train=True):
         xs = self.embed.forward(xs, tf_idf, train)
-        
+
         hs = self.lstm.forward(xs)
         self.hs = hs
         return hs[:, -1, :]
@@ -44,15 +51,26 @@ class Encoder:
 
 
 class Decoder:
-    def __init__(self, vocab_size, wordvec_size, hidden_size):
+    def __init__(self, vocab_size, wordvec_size, hidden_size, seed):
         V, D, H = vocab_size, wordvec_size, hidden_size
         rn = np.random.randn
-
+        np.random.seed(seed)
+        seed += 1
         embed_W = (rn(V, D) / 100).astype('f')
+        np.random.seed(seed)
+        seed += 1
         lstm_Wx = (rn(D, 4 * H) / np.sqrt(D)).astype('f')
+        np.random.seed(seed)
+        seed += 1
         lstm_Wh = (rn(H, 4 * H) / np.sqrt(H)).astype('f')
+        np.random.seed(seed)
+        seed += 1
         lstm_b = np.zeros(4 * H).astype('f')
+        np.random.seed(seed)
+        seed += 1
         affine_W = (rn(H, V) / np.sqrt(H)).astype('f')
+        np.random.seed(seed)
+        seed += 1
         affine_b = np.zeros(V).astype('f')
 
         self.embed = TimeEmbedding(embed_W)
@@ -97,10 +115,10 @@ class Decoder:
 
 
 class Seq2seq(BaseModel):
-    def __init__(self, vocab_size, wordvec_size, hidden_size):
+    def __init__(self, vocab_size, wordvec_size, hidden_size, seed):
         V, D, H = vocab_size, wordvec_size, hidden_size
-        self.encoder = Encoder(V, D, H)
-        self.decoder = Decoder(V, D, H)
+        self.encoder = Encoder(V, D, H, seed)
+        self.decoder = Decoder(V, D, H, seed)
         self.softmax = TimeSoftmaxWithLoss()
 
         self.params = self.encoder.params + self.decoder.params
