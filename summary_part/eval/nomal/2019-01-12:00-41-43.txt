@@ -1,0 +1,8 @@
+ハイパーパラメータの値
+batch_size = 3
+wordvec_size = 40
+hidden_size = 40
+time_size = 5
+lr = 0.2
+max_epoch = 250
+max_grad = 5.0

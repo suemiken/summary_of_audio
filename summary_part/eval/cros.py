@@ -2,13 +2,13 @@ def cre_docu(number, train=True):
     document = []
     emdata = []
     summary = []
-    for i in range(1,9):            
+    for i in range(1,9):
         if train:
-            f1 = open('../../corpora/hori_F&Q/train/hori_corpus'+ str(i) + '.txt', "r")
+            f1 = open('../../corpora/hori_F&Q/train0/hori_corpus'+ str(i) + '.txt', "r")
         else:
             f1 = open('../../corpora/hori_F&Q/summary/hori_summary'+ str(i) + '.txt', "r")
         text= f1.read()
-        
+
         if not i == number:
             document.append(text)
             emdata.append([text])
@@ -28,5 +28,5 @@ def eva_test_train(idx):
         test.append(te)
         em.append(e)
         summary.append(su)
-        
+
     return train, test, em, summary

@@ -44,7 +44,7 @@ class EM_TF_IDF_InputLayer:
         return outdata
 
     def vocab_dict_cre(self, text):
-        
+
         corpus = []
         with MeCab('-F%m,%f[0],%h') as nm:
             for n in nm.parse(text, as_nodes=True):
@@ -120,10 +120,10 @@ class EM_TF_IDF_InputLayer:
         uttrance_em = []
         em_speakers_info = []
         text_number = 0
-        
+
         for document in documents:
             text = document[0]
-            
+
             text = format_text(text, replace_f=False)
             text = text.replace('話者:', '')
             text = text.replace(': ', '')
@@ -152,14 +152,29 @@ class EM_TF_IDF_InputLayer:
         #驚き3    ・
         #平静4    ・
         #恐れ5    ・
+#一回目
+        # em_W = np.array([
+        #     [ 0.1, 0.1, 0.1, 0.2, 0.3, 0.2],
+        #     [ 0.4, 0.6, 0.5, 0.7, 0.6, 0.4],
+        #     [ 0.3, 0.1, 0.5, 0.5, 0.5, 0.3],
+        #     [ 0.4, 0.5, 0.2, 0.4, 0.8, 0.3],
+        #     [ 0.7, 0.6, 0.5, 0.8, 0.6, 0.4],
+        #     [ 0.1, 0.5, 0.4, 0.3, 0.5, 0.2]])
 
+        #２回目
         em_W = np.array([
-            [ 0.1, 0.1, 0.1, 0.2, 0.3, 0.2],
-            [ 0.4, 0.6, 0.5, 0.7, 0.6, 0.4],
-            [ 0.3, 0.1, 0.5, 0.5, 0.5, 0.3],
-            [ 0.4, 0.5, 0.2, 0.4, 0.8, 0.3],
-            [ 0.7, 0.6, 0.5, 0.8, 0.6, 0.4],
-            [ 0.1, 0.5, 0.4, 0.3, 0.5, 0.2]])
+        #怒りの後に、負の感情があるときは強制的になっとくさせられている。一応言いたいことなのだろう。
+            [ 0.01, 0.01, 0.3, 0.05, 0.4, 0.3],
+        #喜びの場合は雑談である場合がおおい。喜びを表す場合はその文自体の重要度は低い。
+            [ 0.05, 0.01, 0.1, 0.01, 0.2, 0.01],
+        #話の内容がつかめないときに悲しみのかんじょうが生まれている。
+            [ 0.01, 0.01, 0.4, 0.3, 0.05, 0.01],
+        #驚きは相槌であるため基本重要でない場合がおおい。
+            [ 0.01, 0.01, 0.01, 0.05, 0.05, 0.01],
+        #平静のときはたんたんと事実を語っているため重要
+            [ 0.7, 1.0, 0.5, 1.0, 0.9, 0.4],
+        #恐れは確認の場合であり、相手の反応により重要かどうかが大きく異なる
+            [ 0.05, 0.4, 0.3, 0.01, 0.4, 0.1]])
 
         em_speakers_docu = self.create_em_speaker_text(documents)
         speaker_em_W = []
@@ -177,7 +192,7 @@ class EM_TF_IDF_InputLayer:
                     speaker_em_W.append(em_W[former_em][after_em])
                     former_em = after_em
             speakers_em_W.append(speaker_em_W)
-            
+
         return np.array(speakers_em_W)
 
 
