@@ -24,10 +24,10 @@ def cros_valu(idx, learn=True):
     # ハイパーパラメータの設定
     batch_size = 3
     wordvec_size = 100
-    hidden_size = 100
+    hidden_size = 50
     time_size = 5  # Truncated BPTTの展開する時間サイズ
     lr = 0.1
-    max_epoch = 5
+    max_epoch = 3
     max_grad = 5.0
     
     train, test, em, summary = eva_test_train(idx)
@@ -35,8 +35,6 @@ def cros_valu(idx, learn=True):
     
     #クロスバリデーション実行回数
     number = 1
-    print(len(np.array(summary)))
-    print(summary)
     for (x, t, e, s) in zip(train, test, em, summary):
         # 学習時に使用する変数
         total_loss = 0
@@ -61,13 +59,14 @@ def cros_valu(idx, learn=True):
         
         docu_xs = np.array(docu_xs)
         docu_ts = np.array(docu_ts)
-        print(str(number)+'回目のクロスバリデーション!\n')
+        print(docu_xs)
+        print(str(number)+'回目のクロスバリデーション!')
         if learn:
             acc_list = []
             for epoch in range(max_epoch):
                 trainer.fit(docu_xs, docu_ts, word_to_id, max_epoch=1,batch_size=batch_size, max_grad=max_grad)
 
-            trainer.plot('seq2seq'+ str(number))
+                trainer.plot('seq2seq'+ str(number))
 
             with open('seq2seq_ver'+ str(number) +'.pkl', 'wb') as f:
                 pickle.dump(model.params, f)
@@ -85,6 +84,8 @@ def cros_valu(idx, learn=True):
         fn.close()
         
         number = number + 1
+        
+    trainer.plot('seq2seq'+ str(number))
         
     return None
             

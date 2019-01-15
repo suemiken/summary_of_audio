@@ -24,8 +24,8 @@ def cros_valu(idx, learn=True):
     
     # ハイパーパラメータの設定
     batch_size = 3
-    wordvec_size = 100
-    hidden_size = 100
+    wordvec_size = 5
+    hidden_size = 5
     time_size = 5  # Truncated BPTTの展開する時間サイズ
     lr = 0.1
     max_epoch = 5
@@ -64,22 +64,22 @@ def cros_valu(idx, learn=True):
             for epoch in range(max_epoch):
                 trainer.fit(docu_xs, docu_ts, max_epoch=1,batch_size=batch_size, max_grad=max_grad)
 
-            trainer.plot('seq2seq'+ str(number))
+#             trainer.plot('seq2seq'+ str(number))
 
-            with open('seq2seq_ver'+ str(number) +'.pkl', 'wb') as f:
-                pickle.dump(model.params, f)
+#             with open('seq2seq_ver'+ str(number) +'.pkl', 'wb') as f:
+#                 pickle.dump(model.params, f)
 
-        else:
-            with open('seq2seq_ver'+ str(number) +'.pkl', 'rb') as f:
-                model.param = pickle.load(f)
+#         else:
+#             with open('seq2seq_ver'+ str(number) +'.pkl', 'rb') as f:
+#                 model.param = pickle.load(f)
             
-        generated_text = eval(inputlayer,model)
+#         generated_text = eval(inputlayer,model)
         
-        simi = similarity(generated_text, s[0], word_to_id)
-        text = '第'+str(number)+'回\n生成文：'+generated_text+'\n類似度：'+str(simi)+'\n'
-        fn = open('../eval/log1.txt', "a")
-        fn.write(text)    
-        fn.close()
+#         simi = similarity(generated_text, s[0], word_to_id)
+#         text = '第'+str(number)+'回\n生成文：'+generated_text+'\n類似度：'+str(simi)+'\n'
+#         fn = open('../eval/log1.txt', "a")
+#         fn.write(text)    
+#         fn.close()
         
         number = number + 1
         

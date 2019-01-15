@@ -61,17 +61,16 @@ class Trainer:
 
             self.current_epoch += 1
 
-    def plot(self, file_name, ylim=None, ):
+    def plot(self, file_name, ylim=None):
         x = numpy.arange(len(self.loss_list))
         if ylim is not None:
             plt.ylim(*ylim)
         plt.plot(x, self.loss_list, label='train')
         plt.xlabel('iterations (x' + str(self.eval_interval) + ')')
         plt.ylabel('loss')
-        plt.show()
-        #
-        # with open(file_name + '.pkl', 'wb') as f:
-        #     pickle.dump(self.model.params, f)
+        # plt.show()
+        plt.savefig(file_name+'.png') 
+        
 
 class RnnlmTrainer:
     def __init__(self, model, optimizer):
