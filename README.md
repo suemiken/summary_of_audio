@@ -1,20 +1,21 @@
-# audio_summary
-フィードバック型のニューラルネットワークを用いて音声の要約を実現する。
-TF-IDF法による要約に加えて、発話者の前後の感情を考慮した要約を目指す。
+# Name 
+Summary_of_Audio_With_Emotion
+
+# OverView
+近年のWebコンテンツの増加に伴い、要約分野の需要が高まっている。中でも、音声要約に着目した。従来の音声要約では、テキスト情報のみを利用した要約となっている。
+そこで、テキスト情報だけでなく、話者の発話に表れる感情を利用して、重要箇所を絞り込むことができると推測し、本プログラムを組んだ。
+まず、本システムのフローを示すがすべて完成しているわけではない。IBMwatosonのSpeach_to_Textを用いて、音声データをテキストデータに変換する。
+その後、各発話に感情を人手で付与する。(本来は自動感情付与器を作成するべきだが、時間の関係上できなかった)また、正解データとして動画を要約した文書を作成する。
+その後、フィードバック型のリカレントニューラルネットワーク(RNN)にて文書要約するがこの際に、TF-IDF法による重み、発話者の前後の感情変化の重み考慮して要約する。
+その後、感情に合わせて要約結果をを読み上げることで、音声データの要約を実現する。
 
 # Dependency
-Dependency is written in the requrements.txt concerning python.
-It is possible to change audio into text by using IBM watson speech to text
-
-IBM watson speech to textを使って音声を文字変換しています。
-pythonのライブラリはrequrements.txtに記載。
+IBM watson speech to textを使って音声を文字変換
+pythonのライブラリはrequrements.txtに記載
 
 # Setup
-I used conda to install python library.
-I advise to use it because of  becoming ease to manage.
-
-condaを使ってライブラリを管理しています。
-楽にバージョン管理ができるためお勧めです。
+condaを使ってライブラリを管理
+楽にバージョン管理ができるためお勧め
 
 # Usage
 create_coporaでは音声データを文字に変換する処理するプログラムが入っている。
@@ -22,5 +23,5 @@ corporaには音声データ→jsonファイル→文字に変換し、感情を
 summary_partには要約する際に必要なプログラムが入っている。
 
 
-# References
-Get To The Point: Summarization with Pointer-Generator Networks
+# LinK
+https://github.com/suemiken/summary_of_audio/edit/develop
