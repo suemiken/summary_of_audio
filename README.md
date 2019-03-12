@@ -24,4 +24,4 @@ summary_partには要約する際に必要なプログラムが入っている�
 
 
 # LinK
-https://github.com/suemiken/summary_of_audio
+https://github.com/suemiken/summary_of_audio/tree/develop
