@@ -11,7 +11,7 @@ from common import config
 # ==============================================
 from common.optimizer import Adam
 from seq2seq_ver3_em_tf_idf.em_tf_idf_trainer import Trainer
-from seq2seq_ver3_em_tf_idf.inputlayer import EM_TF_IDF_InputLayer
+from seq2seq_ver3_em_tf_idf.em_inputlayer import EM_TF_IDF_InputLayer
 from seq2seq_ver3_em_tf_idf.emseq2seq import Seq2seq
 from common.util import eval_perplexity, to_gpu
 

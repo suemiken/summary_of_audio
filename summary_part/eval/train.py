@@ -7,7 +7,7 @@ from seq2seq_ver3_em_tf_idf.em_cros_valu import em_cros_valu
 from datetime import datetime
 import numpy as np
 
-idx = [1, 2, 4, 3]
+idx = [1,3,2,4]
 wvec = 40
 hidden = 40
 # lr=0.08
@@ -21,7 +21,7 @@ paramstr = 'train0_emVer2_lr_0.20_maxe_250_'
 
 cre_fig = Create_fi()
 
-for i in range(12):
+for i in range(6):
     date = datetime.now().strftime("%Y-%m-%d:%H-%M-%S")
     # if i == 0:
     #     cros_valu(idx, wvec, hidden, lr, max_e):
