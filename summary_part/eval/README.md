@@ -5,8 +5,6 @@
 感情を考慮したseq2seqによる要約結果が入っている
 ## nomal
 seq2seqによる要約結果が入っている
-## owakonn
-失敗した結果が入っている
 ## tf-idf	
 TF-IDFを追加したseq2seqによる要約結果が入っている
 ## cros.py
