@@ -1,6 +1,3 @@
-## corpora
-YouTubeから取り出したテキストデータ
-
 ## learing_data
 watosonのspeech_to_textの学習に使うwikipediaのテキストデータ
 
