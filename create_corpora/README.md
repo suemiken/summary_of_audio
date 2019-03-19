@@ -1,3 +1,6 @@
+## corpora
+
+## learing_data
 
 ## create_corpus_for_ibm.py
 watosonのspeech to textの学習のためのコーパスを作成する
