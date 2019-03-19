@@ -22,8 +22,8 @@ watosonのspeech to textの言語モデルにコーパスを登録する
 ## json_to_corpus.py
 watosonのspeech to textでえたjsonファイルをタグ付きコーパスに変換する
 
-mp3_to_corpus.py
-## 音声データをタグ付きコーパスに変換する
+## mp3_to_corpus.py
+音声データをタグ付きコーパスに変換する
 
 ## simple_json_to_plaincorpus.py
 jsonファイルをプレーンコーパスに変換する
