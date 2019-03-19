@@ -8,6 +8,7 @@ watosonのspeech_to_textの学習に使うwikipediaのテキストデータ
 watosonのspeech to textの学習のためのコーパスを作成する
 
 ## data_collect.py
+複数の音声データを入力し、複数のjsonファイルを収集するプログラム
 
 ## delete_corpus.py
 watosonのspeech to text内のコーパスを削除する
