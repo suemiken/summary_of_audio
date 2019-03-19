@@ -26,3 +26,5 @@ summary_partには要約する際に必要なプログラムが入っている�
 
 # LinK
 https://github.com/suemiken/summary_of_audio/tree/develop
+本プログラムは「ゼロから作るDeepLearning２ー自然言語処理編」のプログラムを改良して作成している。大変わかりやすいため参照して欲しい
+https://www.amazon.co.jp/ゼロから作るDeep-Learning-―自然言語処理編-斎藤-康毅/dp/4873118360
