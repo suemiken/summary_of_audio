@@ -16,7 +16,7 @@ pythonのライブラリはrequrements.txtに記載
 
 # Setup
 condaを使ってライブラリを管理した。
-本研究室のpc(一台)に環境構築をしておいたため、summary_of_audio/eval/train0~1.pyを実行すれば、学習させることができる。
+本研究室のpc(一台)に環境構築をしておいたため、summary_part/eval/train0~1.pyを実行すれば、学習させることができる。
 
 # Usage
 create_coporaでは音声データを文字に変換する処理するプログラムが入っている。
